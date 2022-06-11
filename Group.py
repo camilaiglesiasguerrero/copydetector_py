@@ -14,8 +14,8 @@ class Group:
         for f_in_group in self.files:
             lines1=[]
             lines2=[]
-            with open(f_in_group.get_path(), 'r',encoding="utf-8") as file1:
-                with open(file.get_path(), 'r',encoding="utf-8") as file2:
+            with open(f_in_group.get_path(), 'r',encoding="utf-8",errors="replace") as file1:
+                with open(file.get_path(), 'r',encoding="utf-8",errors="replace") as file2:
 
                     for l in file1:
                         l = self.__filter_line(l)
