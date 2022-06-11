@@ -28,7 +28,11 @@ class Group:
                             lines2.append(l)
 
                     same = set(lines1).intersection(lines2)
-                    same_percent = (float(len(same)) / float(len(lines2))) * 100.0
+                    if len(lines2)>0:
+                        same_percent = (float(len(same)) / float(len(lines2))) * 100.0
+                    else:
+                        same_percent = 0
+                        
                     if same_percent > same_percent_max:
                         same_percent_max=same_percent 
 
