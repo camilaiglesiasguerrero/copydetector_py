@@ -101,8 +101,6 @@ class Group:
         :type file: File
         :return: The return value is a boolean value.
         """
-        # comparo el archivo que vino con todos los de este grupo
-        # y me quedo con el % de similitud maximo
         same_percent_max = 0
         for f_in_group in self.__files:
             lines1 = []
@@ -120,15 +118,7 @@ class Group:
                     if same_percent > same_percent_max:
                         same_percent_max = same_percent
 
-            #print("Comparo {} con {}...".format(file.get_path(),f_in_group.get_path()))
-            #print("Lineas en comun:%.1f %%:" % (same_percent) )
-            # for line in same:
-            #    print(line)
-            # print("__________________________________________")
-        # _______________________________________________________
-
         if same_percent_max >= Group.__same_lines_percent_level:
-            # me guardo el maximo de similitud para este grupo
             if (not (file in self.__files)) and same_percent_max > self.__group_same_max:
                 self.__group_same_max = same_percent_max
             return True
@@ -142,7 +132,6 @@ class Group:
         :param actual_file: File
         :type actual_file: File
         """
-        # lo agrego solo si no es el mismo archivo
         if not (actual_file in self.__files):
             self.__files.append(actual_file)
 

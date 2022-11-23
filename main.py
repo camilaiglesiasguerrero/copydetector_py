@@ -1,11 +1,11 @@
 import os
-import csv
 import sys
 from file import File
 from group import Group
+from data_handler import DataHandler
 
 Group.same_lines_percent = 60 # Seteo porcentaje de lineas en comun entre archivos
-
+OUTPUT_FILE = './posiblesCopias_df.csv'
 # Leo de los argumentos de la consola el directorio a analizar
 try:
 	analize_path = sys.argv[1]
@@ -49,16 +49,9 @@ for file in filesToAnalize:
         groups.append(Group(file))
 
 #Resultados
-to_print = [str]
-print(f"{len(groups)} groups.")
-with open('posiblesCopias.csv', 'w', newline='') as file:
-	writer = csv.writer(file)
-	for group in groups:
-		writer.writerow("POSIBLES COPIAS")
-		if group.has_copies:		
-			to_print = group.return_files
-			for p in to_print:
-				writer.writerow(p)
-			print(f"Posibles Copias (similitud: {round(group.same_max, 2)}%):")		
-			group.print_files()
-			print("________________________________\n")
+print(f">>> System: {len(groups)} groups found.")
+copies = list[Group](filter(lambda x: x.has_copies, groups))
+d_handler = DataHandler(OUTPUT_FILE, copies)
+d_handler.config_dataframe()
+d_handler.print_df()
+d_handler.df_to_csv()
