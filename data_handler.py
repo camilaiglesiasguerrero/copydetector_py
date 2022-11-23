@@ -5,7 +5,7 @@ class DataHandler:
     def __init__(self, filename: str, groups: list[Group]) -> None:
         self.__filename = filename
         self.__groups = groups
-        self.__columns = ["Is Copy?", "Groups", "Files", "Path", "Percenteage"]
+        self.__columns = ["Is Copy?", "Groups", "Files", "Path", "Percentage"]
         self.__dataframe: pd.DataFrame = pd.DataFrame(columns=self.__columns)
     
     @property
@@ -27,7 +27,7 @@ class DataHandler:
         - Groups
         - Files
         - Path
-        - Percenteage
+        - Percentage
         
         The function iterates through the list of groups, and for each group, it creates a dataframe
         with the following data: 
@@ -36,7 +36,7 @@ class DataHandler:
         - Groups: f'Group {i+1}'
         - Files: [file.split(';')[0] for file in self.__groups[i].return_files]
         - Path: [file.split(';')[1] for file in self.__groups[i].return_files]
-        - Percenteage: round(self.__groups[i].same_max, 2)
+        - Percentage: round(self.__groups[i].same_max, 2)
         """
         for i in range(len(self.__groups)):
             data = {
