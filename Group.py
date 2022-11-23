@@ -1,3 +1,4 @@
+from io import TextIOWrapper
 from file import File
 
 
@@ -75,6 +76,22 @@ class Group:
         """
         self.__same_lines_percent_level = level
 
+    def __filter_and_append_line(self, list_lines: list[str], file: TextIOWrapper) -> None:
+        """
+        It takes a list of strings and a file, and for each line in the file, it filters the line, and
+        if the line is longer than 3 characters and doesn't contain the string "#include", it appends
+        the line to the list
+        
+        :param list_lines: list[str]
+        :type list_lines: list[str]
+        :param file: TextIOWrapper
+        :type file: TextIOWrapper
+        """
+        for line in file:
+            line = self.__filter_line(line)
+            if len(line) > 3 and (not ("#include" in line)):
+                list_lines.append(line)
+
     def file_belong(self, file: File) -> bool:
         """
         It compares the lines of two files and returns true if the percentage of lines in common is
@@ -93,15 +110,8 @@ class Group:
             with open(f_in_group.path, 'r', encoding="utf-8", errors="replace") as file1:
                 with open(file.path, 'r', encoding="utf-8", errors="replace") as file2:
 
-                    for line in file1:
-                        line = self.__filter_line(line)
-                        if len(line) > 3 and (not ("#include" in line)):
-                            lines1.append(line)
-
-                    for line in file2:
-                        line = self.__filter_line(line)
-                        if len(line) > 3 and (not ("#include" in line)):
-                            lines2.append(line)
+                    self.__filter_and_append_line(lines1, file1)
+                    self.__filter_and_append_line(lines2, file2)
 
                     same = set(lines1).intersection(lines2)
                     same_percent = (float(len(same)) /
