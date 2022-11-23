@@ -1,10 +1,10 @@
 import os
 import csv
 import sys
-from File import File
-from Group import Group
+from file import File
+from group import Group
 
-Group.same_lines_percent_level = 60 # Seteo porcentaje de lineas en comun entre archivos
+Group.same_lines_percent = 60 # Seteo porcentaje de lineas en comun entre archivos
 
 # Leo de los argumentos de la consola el directorio a analizar
 try:
@@ -24,42 +24,41 @@ for root, dirs, files in os.walk(analize_path, topdown=False):
 			file_stats = os.stat(file_path).st_size
 			filesToAnalize.append(File(file_path,file_stats,name))
 
-print("{0} files detected.".format(len(filesToAnalize)))
-for f in filesToAnalize:
-	print(f.get_path())
+print(f"{len(filesToAnalize)} files detected.")
+for file in filesToAnalize:
+	print(file.path)
 
 # Analisis
-groups = []
+groups = list[Group]()
 
 flagOnce=True
-for f in filesToAnalize:
+for file in filesToAnalize:
     if flagOnce:
         flagOnce=False #solo entro la primera vez
-        groups.append(Group(f))
+        groups.append(Group(file))
 
     #pregunto si el archivo pertecene a los grupos
     flagBelong=False
-    for g in groups:
-        if g.file_belong(f):
-            g.append_file(f) #si pertecene a un grupo existente lo agrego
+    for group in groups:
+        if group.file_belong(file):
+            group.append_file(file) #si pertecene a un grupo existente lo agrego
             flagBelong=True
     
     #si no pertenece a ninguno, lo agrego a uno nuevo
     if flagBelong==False:
-        groups.append(Group(f))
-
+        groups.append(Group(file))
 
 #Resultados
-roPrint = []
-print("{0} groups.".format(len(groups)))
+to_print = [str]
+print(f"{len(groups)} groups.")
 with open('posiblesCopias.csv', 'w', newline='') as file:
 	writer = csv.writer(file)
-	for g in groups:
+	for group in groups:
 		writer.writerow("POSIBLES COPIAS")
-		if g.has_copies():		
-			toPrint = g.return_files()
-			for p in toPrint:
+		if group.has_copies:		
+			to_print = group.return_files
+			for p in to_print:
 				writer.writerow(p)
-			print("Posibles Copias (%% similitud:%.1f):" % (g.get_same_max()))		
-			g.print_files()
+			print(f"Posibles Copias (similitud: {round(group.same_max, 2)}%):")		
+			group.print_files()
 			print("________________________________\n")
