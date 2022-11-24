@@ -8,13 +8,50 @@ Compara archivos .c en diferentes directorios y genera un archivo CSV indicando 
 
 ### Instalación
 
-Copy detector requiere [Python 3](https://www.python.org/download/releases/3.0/) para funcionar.
+Requisitos para Copy detector funcione [Clic en el icono]
 
-Clonar el repositorio y ejecutar el script indicando la carpeta a analizar.
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <a href="https://www.python.org" target="_blank">
+            <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/>
+        </a> 
+      </td>
+      <td>
+        Python 3
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="https://pandas.pydata.org/" target="_blank"> 
+            <img src="https://github.com/devicons/devicon/blob/master/icons/pandas/pandas-original-wordmark.svg?raw=true" alt="Pandas" width="40" height="40" /> 
+        </a>
+      </td>
+      <td>
+        Pandas
+      </td>
+    </tr>
+  </tbody>
+</table>
+</br>
+
+* Clonar el repositorio y ejecutar el script indicando la carpeta a analizar.
 
 ```sh
 $ cd copydetector_py
 $ python3 main.py /path/to/directory
+```
+
+* Instalar requisitos contenidos en el archivo _requirements.txt_
+
+```sh
+pip install -r requirements.txt
+```
+
+* O sino instalar Pandas de la siguiente manera:
+```sh
+pip install pandas
 ```
 
 ### Licencia
@@ -22,6 +59,7 @@ $ python3 main.py /path/to/directory
     Copy detector
     Copyright (C) <2020>  <Ernesto Gigliotti>
     Copyright (C) <2020>  <Camila Iglesias>
+    Copyright (C) <2022>  <Facundo Falcone> - Improvements
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
