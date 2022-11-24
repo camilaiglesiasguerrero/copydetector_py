@@ -36,13 +36,6 @@ Requisitos para Copy detector funcione [Clic en el icono]
 </table>
 </br>
 
-* Clonar el repositorio y ejecutar el script indicando la carpeta a analizar.
-
-```sh
-$ cd copydetector_py
-$ python3 main.py /path/to/directory
-```
-
 * Instalar requisitos contenidos en el archivo _requirements.txt_
 
 ```sh
@@ -52,6 +45,13 @@ pip install -r requirements.txt
 * O sino instalar Pandas de la siguiente manera:
 ```sh
 pip install pandas
+```
+
+* Clonar el repositorio y ejecutar el script indicando la carpeta a analizar.
+
+```sh
+$ cd copydetector_py
+$ python3 main.py /path/to/directory
 ```
 
 ### Licencia
