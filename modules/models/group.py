@@ -1,5 +1,23 @@
+# Copy detector
+# Copyright (C) <2020>  <Ernesto Gigliotti>
+# Copyright (C) <2020>  <Camila Iglesias>
+# Copyright (C) <2022>  <Facundo Falcone> - Improvements
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 from io import TextIOWrapper
-from file import File
+from modules.models.file import File
 
 
 class Group:
@@ -17,7 +35,7 @@ class Group:
         self.__files = [file]
         self.__group_same_max = 0.0
 
-    def __filter_line(self, line: str)  -> str:
+    def __filter_line(self, line: str) -> str:
         """
         It takes a string, and removes all the characters in the list "to_filter" from the string
         
@@ -65,13 +83,13 @@ class Group:
         :return: The same_lines_percent_level
         """
         return self.__same_lines_percent_level
-    
+
     @same_lines_percent.setter
     def same_lines_percent(self, level: int) -> None:
         """
         This function takes in a level and sets the same_lines_percent_level to that level
         
-        :param level: The level of the logger
+        :param level: The minimun percentage to consider if is a copy
         :type level: int
         """
         self.__same_lines_percent_level = level
@@ -112,7 +130,7 @@ class Group:
                     self.__filter_and_append_line(lines2, file2)
 
                     same = set(lines1).intersection(lines2)
-                    same_percent = (float(len(same)) /
+                    same_percent = (len(same) /
                                     float(len(lines2))) * 100.0 if lines2 else 0
 
                     if same_percent > same_percent_max:

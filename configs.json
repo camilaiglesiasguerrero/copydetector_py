@@ -1,0 +1,7 @@
+{
+    "configs": {
+        "percentage": 60,
+        "filename_output": "./posiblesCopias_df.csv",
+        "sort_by_percent_desc": false
+    }
+}
