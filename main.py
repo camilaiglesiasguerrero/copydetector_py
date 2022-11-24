@@ -17,11 +17,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
-from modules.models.file import File
 from modules.models.group import Group
+from modules.models.copy_manager import CopyManager
 from modules.models.data_handler import DataHandler
 from modules.models.file_manager import FileManager
-from modules.models.copy_manager import CopyManager
 
 
 if __name__ == '__main__':

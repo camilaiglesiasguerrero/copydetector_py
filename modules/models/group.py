@@ -22,7 +22,6 @@ from modules.models.file import File
 
 class Group:
     """Represents a group of files."""
-    __bytes_delta = 100
     __same_lines_percent_level = 60
 
     def __init__(self, file: File) -> None:

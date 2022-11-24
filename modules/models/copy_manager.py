@@ -51,8 +51,6 @@ class CopyManager:
         or spec.c
         :return: A list of File objects.
         """
-        # cargo archivos a analizar
-        # files_to_analyze = []
         for root, dirs, files in os.walk(self.__analyze_path, topdown=False):
             for name in files:
                 if name.endswith(".c") and name != "specs.c" and name != "spec.c":
@@ -63,7 +61,6 @@ class CopyManager:
         for file in self.__files_to_analyze:
             print(file.path)
 
-
     def make_groups(self) -> list[Group]:
         """
         It takes a list of files and returns a list of groups of files
@@ -72,21 +69,20 @@ class CopyManager:
         :type files_to_analyze: list[str]
         :return: A list of groups.
         """
-
-        flagOnce = True
+        flag_once = True
         for file in self.__files_to_analyze:
-            if flagOnce:
-                flagOnce = False  # solo entro la primera vez
+            if flag_once:
+                flag_once = False  # solo entro la primera vez
                 self.__groups_analyzed.append(Group(file))
 
             # pregunto si el archivo pertecene a los grupos
-            flagBelong = False
+            flag_belong = False
             for group in self.__groups_analyzed:
                 if group.file_belong(file):
                     # si pertecene a un grupo existente lo agrego
                     group.append_file(file)
-                    flagBelong = True
+                    flag_belong = True
 
             # si no pertenece a ninguno, lo agrego a uno nuevo
-            if flagBelong == False:
+            if flag_belong == False:
                 self.__groups_analyzed.append(Group(file))
