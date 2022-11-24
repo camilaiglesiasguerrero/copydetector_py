@@ -54,6 +54,23 @@ $ cd copydetector_py
 $ python3 main.py /path/to/directory
 ```
 
+## Importante:
+
+El archivo [config.json](./configs.json) tiene la configuracion del script, editarlo en caso de querer calibrarlo segun necesidad.
+
+```json
+{
+    "configs": {
+        "percentage": 60,
+        "filename_output": "./posiblesCopias_df.csv",
+        "sort_by_percent_desc": false
+    }
+}
+```
+
+- la clave _**"percentage": 60**_ indica que a partir del 60% de similitud, se considerara copia
+- La clave _**"filename_output": "./posiblesCopias_df.csv"**_ indicara el nombre y directorio de salida del archivo el cual contendra los datos de las copias
+- La clave _**"sort_by_percent_desc": false**_ indicara, si esta en True, que los datos del archivo de salida estaran ordenados de forma descendente segun porcentaje de copia. Caso contrario se ordenara segun se vayan encontrando las copias.
 ### Licencia
 
     Copy detector
