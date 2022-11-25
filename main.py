@@ -17,6 +17,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
+from modules.common.color import Color
 from modules.models.group import Group
 from modules.models.copy_manager import CopyManager
 from modules.models.data_handler import DataHandler
@@ -34,14 +35,15 @@ if __name__ == '__main__':
     try:
         analize_path = sys.argv[1]
     except Exception as e:
-        print(">>> System: Path not specified. Using current directory...")
+        print(f"{Color._B_RED.value}{Color._F_WHITE.value}>>> System: Path not specified. Using current directory...{Color._NO_COLOR.value}")
         analize_path = "."
     
     copy_manager = CopyManager(analize_path)
     groups = copy_manager.groups_analyzed
 
-    print(f">>> System: {len(groups)} groups found.")
+    print(f"\n{Color._B_BLUE.value}{Color._F_WHITE.value}>>> System: A total of {len(groups)} groups have been found.{Color._NO_COLOR.value}")
     copies = list[Group](filter(lambda x: x.has_copies, groups))
+    print(f"{Color._B_RED.value}{Color._F_WHITE.value}>>> System: {len(copies)} groups with possible copies.{Color._NO_COLOR.value}")
 
     d_handler = DataHandler(OUTPUT_FILE, copies)
     d_handler.config_dataframe()

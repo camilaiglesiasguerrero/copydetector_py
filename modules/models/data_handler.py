@@ -61,8 +61,8 @@ class DataHandler:
             data = {
                 self.__columns[0]: f'POSIBLE COPIA {i+1}',
                 self.__columns[1]: f'Group {i+1}',
-                self.__columns[2]: [file.split(';')[0] for file in self.__groups[i].return_files],
-                self.__columns[3]: [file.split(';')[1] for file in self.__groups[i].return_files],
+                self.__columns[2]: list[str](map(lambda x: x.strip(), [file.split(';')[0] for file in self.__groups[i].return_files])),
+                self.__columns[3]: list[str](map(lambda x: x.strip(), [file.split(';')[1] for file in self.__groups[i].return_files])),
                 self.__columns[4]: round(self.__groups[i].same_max, 2)
             }
 
