@@ -34,19 +34,6 @@ class Group:
         self.__files = [file]
         self.__group_same_max = 0.0
 
-    def __filter_line(self, line: str) -> str:
-        """
-        It takes a string, and removes all the characters in the list "to_filter" from the string
-        
-        :param line: str - the line of code to filter
-        :type line: str
-        :return: the line after it has been filtered.
-        """
-        to_filter = ["}", "{", "\n", "\r", " ", "\t", "break", ";"]
-        for filter in to_filter:
-            line = line.replace(filter, '')
-        return line
-
     @property
     def has_copies(self) -> bool:
         """
@@ -93,6 +80,19 @@ class Group:
         """
         self.__same_lines_percent_level = level
 
+    def __filter_line(self, line: str) -> str:
+        """
+        It takes a string, and removes all the characters in the list "to_filter" from the string
+        
+        :param line: str - the line of code to filter
+        :type line: str
+        :return: the line after it has been filtered.
+        """
+        to_filter = ["}", "{", "\n", "\r", " ", "\t", "break", ";"]
+        for filter in to_filter:
+            line = line.replace(filter, '')
+        return line
+
     def __filter_and_append_line(self, list_lines: list[str], file: TextIOWrapper) -> None:
         """
         It takes a list of strings and a file, and for each line in the file, it filters the line, and
@@ -129,8 +129,7 @@ class Group:
                     self.__filter_and_append_line(lines2, file2)
 
                     same = set(lines1).intersection(lines2)
-                    same_percent = (len(same) /
-                                    float(len(lines2))) * 100.0 if lines2 else 0
+                    same_percent = (len(same) / float(len(lines2))) * 100.0 if lines2 else 0
 
                     if same_percent > same_percent_max:
                         same_percent_max = same_percent

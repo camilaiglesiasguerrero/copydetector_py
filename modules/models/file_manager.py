@@ -32,14 +32,6 @@ class FileManager:
         self.__path = file_path
         self.__configs = self.open_file()
 
-    def open_file(self) -> dict:
-        """
-        It opens a file, reads it, and returns the contents of the file
-        :return: A dictionary of the configs.
-        """
-        with open(self.__path, 'r') as json_file:
-            return json.load(json_file)["configs"]
-
     @property
     def percentage(self) -> int:
         """
@@ -64,3 +56,11 @@ class FileManager:
         :return: The value of the key "sort_by_percent_desc" in the dictionary "__configs"
         """
         return self.__configs["sort_by_percent_desc"]
+
+    def open_file(self) -> dict:
+        """
+        It opens a file, reads it, and returns the contents of the file
+        :return: A dictionary of the configs.
+        """
+        with open(self.__path, 'r') as json_file:
+            return json.load(json_file)["configs"]['script']

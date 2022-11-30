@@ -22,11 +22,13 @@ from modules.models.group import Group
 from modules.models.copy_manager import CopyManager
 from modules.models.data_handler import DataHandler
 from modules.models.file_manager import FileManager
+from modules.database.db_manager import DAOManager
 
 
 if __name__ == '__main__':
     CONFIG_FILE = './configs.json'
     file_manager = FileManager(CONFIG_FILE)
+    dao_manager = DAOManager(CONFIG_FILE)
     OUTPUT_FILE = file_manager.output_file_path
 
     # Seteo porcentaje de lineas en comun entre archivos
@@ -49,3 +51,5 @@ if __name__ == '__main__':
     d_handler.config_dataframe()
     d_handler.print_df()
     d_handler.df_to_csv(file_manager.sort_by_percentage)
+    dao_manager.create_table()
+    dao_manager.insert(d_handler.dataframe)

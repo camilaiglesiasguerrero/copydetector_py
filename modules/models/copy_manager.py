@@ -45,6 +45,13 @@ class CopyManager:
         self.make_groups()
         return self.__groups_analyzed
 
+    def __print_files_path(self) -> None:
+        """
+        This function prints the path of each file in the list of files to analyze
+        """
+        for file in self.__files_to_analyze:
+            print(file.path)
+
     def make_files_to_analyze(self) -> None:
         """
         It walks through a directory and returns a list of files that end with .c and are not named specs.c
@@ -58,8 +65,7 @@ class CopyManager:
                     file_stats = os.stat(file_path).st_size
                     self.__files_to_analyze.append(File(file_path, file_stats, name))
         print(f"{len(self.__files_to_analyze)} files detected.")
-        for file in self.__files_to_analyze:
-            print(file.path)
+        self.__print_files_path()
 
     def make_groups(self) -> list[Group]:
         """
@@ -84,5 +90,5 @@ class CopyManager:
                     flag_belong = True
 
             # si no pertenece a ninguno, lo agrego a uno nuevo
-            if flag_belong == False:
+            if not flag_belong:
                 self.__groups_analyzed.append(Group(file))
