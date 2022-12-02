@@ -52,4 +52,4 @@ if __name__ == '__main__':
     d_handler.print_df()
     d_handler.df_to_csv(file_manager.sort_by_percentage)
     dao_manager.create_table()
-    dao_manager.insert(d_handler.dataframe)
+    dao_manager.insert_table(d_handler.dataframe)

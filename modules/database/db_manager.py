@@ -20,6 +20,7 @@ import json
 import re
 import sqlite3 as db
 from pandas import DataFrame
+from modules.common.color import Color as c
 
 class DAOManager:
     "Represents the DAO Manager, using SQLite"
@@ -53,45 +54,35 @@ class DAOManager:
         with open(query_path, 'r') as db_config:
             return db_config.read()
 
-    def __execute_query(self, query: str, error_msg: str):
+    def __execute_queries(self, queries: list[str], error_msg: str, success_msg: str, type: str = 'create') -> None:
         """
-        It connects to a database, executes a query and returns the result
+        It executes a list of queries and returns the result of the last query executed
         
-        :param query: str - the query to be executed
-        :type query: str
-        :param error_msg: str = 'Error while processing data'
+        :param queries: list[str] - a list of queries to be executed
+        :type queries: list[str]
+        :param error_msg: The error message to be displayed if the query fails
         :type error_msg: str
+        :param success_msg: The message to be displayed when the query is executed successfully
+        :type success_msg: str
+        :param type: str = 'create', defaults to create
+        :type type: str (optional)
         :return: The result of the query.
         """
         with db.connect(f'{self.__db_output_file}') as conection:
             try:
-                result = conection.execute(query)
-                if result:
-                    print('New data processed')
-                return result
-            except db.OperationalError as oe:
-                print(error_msg, oe)
-    
-    def __execute_multiple_queries(self, queries: list[str], error_msg: str):
-        """
-        It executes a list of queries and returns the result of the last query.
-        
-        :param queries: list[str]
-        :type queries: list[str]
-        :param error_msg: str = 'Error while processing new data'
-        :type error_msg: str
-        :return: The result of the last query executed.
-        """
-        with db.connect(f'{self.__db_output_file}') as conection:
-            try:
+                rows_amount = 0
                 for query in queries:
                     result = conection.execute(query)
+                    if result and result.rowcount > 0:
+                        rows_amount += result.rowcount
                 conection.commit()
-                if result:
-                    print('New data processed')
+                if result and result.rowcount > 0:
+                    print(f'{c._B_BLUE.value}{c._F_WHITE.value}>> {success_msg}{c._NO_COLOR.value}')
+                    if not type == 'create':
+                        print(f'{c._B_GREEN.value}{c._F_BLACK.value}{rows_amount} rows affected{c._NO_COLOR.value}')
                 return result
             except db.OperationalError as oe:
-                print(error_msg, oe)
+                print(f'{c._B_RED.value}{c._F_WHITE.value}{error_msg}{c._NO_COLOR.value}', oe)
 
     def __replace_table_name(self, query: str) -> str:
         """
@@ -102,16 +93,23 @@ class DAOManager:
         :return: The query is being returned with the table name replaced.
         """
         return query.replace('T_NAME', self.__table)
+    
+    def __re_do_table(self) -> None:
+        """
+        It drops the table and then creates it again
+        """
+        self.drop_table()
+        self.create_table()
 
-    def create_table(self):
+    def create_table(self) -> None:
         """
         It opens a file, reads the contents, replaces a string in the contents, and then executes the
         query creating the table if not exists.
         """
         query = self.__replace_table_name(self.__open_query_file(self.__ddl_paths['create']))
-        self.__execute_query(query, 'Table already exists')
+        self.__execute_queries([query], 'Table already exists', f'Table {self.__table} created successfully')
     
-    def insert(self, dataframe: DataFrame):
+    def insert_table(self, dataframe: DataFrame) -> None:
         """
         It takes a dataframe, creates a list of tuples from the dataframe, then creates a list of
         queries from the tuples, then executes the queries.
@@ -120,23 +118,47 @@ class DAOManager:
         :type dataframe: DataFrame
         """
         if self.__insert_deleting_before:
-            self.delete()
+            self.__re_do_table()
         query = self.__replace_table_name(self.__open_query_file(self.__dml_paths['insert']))
         to_replace = re.findall("1_.", query)
         tuples_list = dataframe.itertuples(index=False, name=None)
         queries = list[str]()
         for l_tuple in tuples_list:
-            query_replaced = query
-            for i in range(len(l_tuple)):
-                query_replaced = query_replaced.replace(to_replace[i], f'{l_tuple[i]}')
+            query_replaced = self.__create_insert_query(to_replace, l_tuple, query)
             queries.append(query_replaced)
-        self.__execute_multiple_queries(queries, 'Error adding the rows')
+        self.__execute_queries(queries, 'Error adding the data', 'Data inserted successfully', type='insert')
     
-    def delete(self):
+    def __create_insert_query(self, to_replace: list[str], replacement: tuple, query_base: str) -> str:
+        """
+        It takes a list of strings and a tuple of strings and replaces the strings in the list with the
+        strings in the tuple in a given string
+        
+        :param to_replace: list of strings to be replaced in the query
+        :type to_replace: list[str]
+        :param replacement: tuple with the values to replace in the query
+        :type replacement: tuple
+        :param query_base: The base query that will be used to create the insert query by replacing its values
+        :type query_base: str
+        :return: The query with all the values replaced to be executed.
+        """
+        query_replaced = query_base
+        for i in range(len(replacement)):
+            query_replaced = query_replaced.replace(to_replace[i], f'{replacement[i]}')
+        return query_replaced
+
+    def delete_table(self) -> None:
         """
         It opens a file, reads the contents of the file, replaces the table name in the file with the
         table name provided by the user, executes the query and prints a message
         """
         query = self.__replace_table_name(self.__open_query_file(self.__dml_paths['delete']))
-        self.__execute_query(query, 'Table deleted successfully')
+        self.__execute_queries([query], 'Error deleting the table', f'Table {self.__table} deleted successfully', type='delete')
+    
+    def drop_table(self) -> None:
+        """
+        It opens a file, reads the contents of the file, replaces the table name in the file with the
+        table name of the class, and then executes the query
+        """
+        query = self.__replace_table_name(self.__open_query_file(self.__ddl_paths['drop']))
+        self.__execute_queries([query], 'Error dropping the table', f'Table {self.__table} dropped successfully', type='drop')
         

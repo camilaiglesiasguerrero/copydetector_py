@@ -32,6 +32,16 @@ Requisitos para Copy detector funcione [Clic en el icono]
         Pandas
       </td>
     </tr>
+    <tr>
+      <td>
+        <a href="https://www.sqlite.org/" target="_blank"> 
+            <img src="https://camo.githubusercontent.com/1b8a779f280e099e2d67ab949dad604e25ce0d321e66474c04430201790b3874/68747470733a2f2f7777772e766563746f726c6f676f2e7a6f6e652f6c6f676f732f73716c6974652f73716c6974652d69636f6e2e737667" alt="SQLite" width="40" height="40" /> 
+        </a>
+      </td>
+      <td>
+        SQLite
+      </td>
+    </tr>
   </tbody>
 </table>
 </br>
