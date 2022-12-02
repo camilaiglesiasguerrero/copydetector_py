@@ -126,8 +126,9 @@ class DAOManager:
         tuples_list = dataframe.itertuples(index=False, name=None)
         queries = list[str]()
         for l_tuple in tuples_list:
+            query_replaced = query
             for i in range(len(l_tuple)):
-                query_replaced = query.replace(to_replace[i], f'{l_tuple[i]}')
+                query_replaced = query_replaced.replace(to_replace[i], f'{l_tuple[i]}')
             queries.append(query_replaced)
         self.__execute_multiple_queries(queries, 'Error adding the rows')
     
