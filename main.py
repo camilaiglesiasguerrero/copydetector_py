@@ -32,7 +32,7 @@ if __name__ == '__main__':
     OUTPUT_FILE = file_manager.output_file_path
 
     # Seteo porcentaje de lineas en comun entre archivos
-    Group.same_lines_percent = file_manager.percentage
+    Group.same_lines_percent_level = file_manager.percentage
     # Leo de los argumentos de la consola el directorio a analizar
     try:
         analize_path = sys.argv[1]

@@ -22,7 +22,7 @@ from modules.models.file import File
 
 class Group:
     """Represents a group of files."""
-    __same_lines_percent_level = 60
+    same_lines_percent_level = 60
 
     def __init__(self, file: File) -> None:
         """
@@ -33,7 +33,7 @@ class Group:
         """
         self.__files = [file]
         self.__group_same_max = 0.0
-
+    
     @property
     def has_copies(self) -> bool:
         """
@@ -68,17 +68,17 @@ class Group:
         This function returns the percentage of lines that are the same in the two files
         :return: The same_lines_percent_level
         """
-        return self.__same_lines_percent_level
+        return Group.same_lines_percent_level
 
     @same_lines_percent.setter
-    def same_lines_percent(self, level: int) -> None:
+    def same_lines_percent(self, level: float) -> None:
         """
         This function takes in a level and sets the same_lines_percent_level to that level
         
         :param level: The minimun percentage to consider if is a copy
-        :type level: int
+        :type level: float
         """
-        self.__same_lines_percent_level = level
+        Group._same_lines_percent_level = level
 
     def __filter_line(self, line: str) -> str:
         """
@@ -134,7 +134,7 @@ class Group:
                     if same_percent > same_percent_max:
                         same_percent_max = same_percent
 
-        if same_percent_max >= Group.__same_lines_percent_level:
+        if same_percent_max >= Group.same_lines_percent_level:
             if (not (file in self.__files)) and same_percent_max > self.__group_same_max:
                 self.__group_same_max = same_percent_max
             return True

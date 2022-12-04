@@ -33,12 +33,12 @@ class FileManager:
         self.__configs = self.open_file()
 
     @property
-    def percentage(self) -> int:
+    def percentage(self) -> float:
         """
         It returns the percentage of the configs.
         :return: The percentage of the total amount of money that the user wants to invest.
         """
-        return self.__configs["percentage"]
+        return float(self.__configs["percentage"])
 
     @property
     def output_file_path(self) -> str:
@@ -55,7 +55,7 @@ class FileManager:
         "__configs"
         :return: The value of the key "sort_by_percent_desc" in the dictionary "__configs"
         """
-        return self.__configs["sort_by_percent_desc"]
+        return bool(self.__configs["sort_by_percent_desc"])
 
     def open_file(self) -> dict:
         """

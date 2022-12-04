@@ -21,6 +21,8 @@ from modules.models.group import Group
 
 
 class DataHandler:
+    """Represents the entity that handle all the data & dataframes."""
+    
     def __init__(self, filename: str, groups: list[Group]) -> None:
         self.__filename = filename
         self.__groups = groups

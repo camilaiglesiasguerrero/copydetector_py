@@ -70,19 +70,21 @@ class DAOManager:
         """
         with db.connect(f'{self.__db_output_file}') as conection:
             try:
-                rows_amount = 0
-                for query in queries:
-                    result = conection.execute(query)
+                if queries:
+                    rows_amount = 0
+                    for query in queries:
+                        result = conection.execute(query)
+                        if result and result.rowcount > 0:
+                            rows_amount += result.rowcount
+                    conection.commit()
                     if result and result.rowcount > 0:
-                        rows_amount += result.rowcount
-                conection.commit()
-                if result and result.rowcount > 0:
-                    print(f'{c._B_BLUE.value}{c._F_WHITE.value}>> {success_msg}{c._NO_COLOR.value}')
-                    if not type == 'create':
-                        print(f'{c._B_GREEN.value}{c._F_BLACK.value}{rows_amount} rows affected{c._NO_COLOR.value}')
-                return result
+                        print(f'{c._B_BLUE.value}{c._F_WHITE.value}>> {success_msg}{c._NO_COLOR.value}')
+                        if not type == 'create':
+                            print(f'{c._B_GREEN.value}{c._F_BLACK.value}>> System: {rows_amount} rows affected{c._NO_COLOR.value}')
+                    return result
+                else: print(f"{c._B_RED.value}{c._F_WHITE.value}>> System: There isn't query to execute{c._NO_COLOR.value}")
             except db.OperationalError as oe:
-                print(f'{c._B_RED.value}{c._F_WHITE.value}{error_msg}{c._NO_COLOR.value}', oe)
+                print(f'{c._B_RED.value}{c._F_WHITE.value}>> System: {error_msg}{c._NO_COLOR.value}', oe)
 
     def __replace_table_name(self, query: str) -> str:
         """
