@@ -70,27 +70,37 @@ El archivo [config.json](./configs.json) tiene la configuracion del script, edit
 
 ```json
 {
-    "configs": {
-        "script": {
-            "percentage": 60,
-            "filename_output": "./possible_copies.csv",
-            "sort_by_percent_desc": false
-        },
-        "database": {
-            "name": "copies_db",
-            "table_name": "students_copies",
-            "delete_before_insert": true,
-            "paths": {
-                "db_file": "./modules/database/copies_db.db",
-                "DDL": {
-                    "create": "./modules/database/queries/DDL/create.sql",
-                    "drop": "./modules/database/queries/DDL/drop.sql"
-                },
-                "DML":{
-                    "insert": "./modules/database/queries/DML/insert.sql",
-                    "delete": "./modules/database/queries/DML/delete.sql",
-                    "update": "./modules/database/queries/DML/update.sql",
-                    "select": "./modules/database/queries/DDL/select.sql"
+    "app_info": {
+        "app_name": "Copy Detector",
+        "version": "[V3.0.0.1]"
+    },
+    "copy_detector": {
+        "configs": {
+            "script": {
+                "percentage": 60,
+                "filename_output": "./possible_copies.csv",
+                "sort_by_percent_desc": false,
+                "path_to_analize": "./Repositories",
+                "files_sufix": [".c", ".h"],
+                "excluded_files": ["spect.c", "spects.c"],
+                "columns_name": ["Is Copy?", "Groups", "Files", "Path", "Percentage"]
+            },
+            "database": {
+                "name": "copies_db",
+                "table_name": "students_copies",
+                "delete_before_insert": true,
+                "paths": {
+                    "db_file": "./modules/database/copies_db.db",
+                    "DDL": {
+                        "create": "./modules/database/queries/DDL/create.sql",
+                        "drop": "./modules/database/queries/DDL/drop.sql"
+                    },
+                    "DML": {
+                        "insert": "./modules/database/queries/DML/insert.sql",
+                        "delete": "./modules/database/queries/DML/delete.sql",
+                        "update": "./modules/database/queries/DML/update.sql",
+                        "select": "./modules/database/queries/DML/select.sql"
+                    }
                 }
             }
         }
@@ -106,13 +116,21 @@ Respecto al apartado de la clave **scripts**:
 "script": {
     "percentage": 60,
     "filename_output": "./possible_copies.csv",
-    "sort_by_percent_desc": false
+    "sort_by_percent_desc": false,
+    "path_to_analize": "./Repositories",
+    "files_sufix": [".c", ".h"],
+    "excluded_files": ["spect.c", "spects.c"],
+    "columns_name": ["Is Copy?", "Groups", "Files", "Path", "Percentage"]
 }
 ```
 
-- la clave _**"percentage": 60**_ indica que a partir del 60% de similitud, se considerara copia
-- La clave _**"filename_output": "./posiblesCopias_df.csv"**_ indicara el nombre y directorio de salida del archivo el cual contendra los datos de las copias
-- La clave _**"sort_by_percent_desc": false**_ indicara, si esta en True, que los datos del archivo de salida estaran ordenados de forma descendente segun porcentaje de copia. Caso contrario se ordenara segun se vayan encontrando las copias.
+- la clave _**percentage**_ indica que a partir del 60% de similitud, se considerara copia
+- La clave _**filename_output**_ indicara el nombre y directorio de salida del archivo el cual contendra los datos de las copias
+- La clave _**sort_by_percent_desc**_ indicara, si esta en True, que los datos del archivo de salida estaran ordenados de forma descendente segun porcentaje de copia. Caso contrario se ordenara segun se vayan encontrando las copias.
+- La clave _**path_to_analize**_ indicara el directorio a analizar los archivos.
+- La clave _**files_sufix**_ indicara el sufijo de los archivos los cuales analizar, puede contener uno solo.
+- La clave _**excluded_files**_ indicara los archivos (nombre y sufijo) los cuales ignorar al momento del analisis.
+- La clave _**columns_name**_ indicara el nombre de las columnas que tomara el dataframe para luego volcarlos a un archivo de formato csv, el cual contendra el resultado del analisis de copias.
 
 ---
 
@@ -129,11 +147,11 @@ Respecto al apartado de la clave **database**:
             "create": "./modules/database/queries/DDL/create.sql",
             "drop": "./modules/database/queries/DDL/drop.sql"
         },
-        "DML":{
+        "DML": {
             "insert": "./modules/database/queries/DML/insert.sql",
             "delete": "./modules/database/queries/DML/delete.sql",
             "update": "./modules/database/queries/DML/update.sql",
-            "select": "./modules/database/queries/DDL/select.sql"
+            "select": "./modules/database/queries/DML/select.sql"
         }
     }
 }

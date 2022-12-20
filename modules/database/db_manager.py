@@ -16,33 +16,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import json
 import re
 import sqlite3 as db
 from pandas import DataFrame
 from modules.common.color import Color as c
+from modules.models.config_manager import ConfigManager as CoMa
 
 class DAOManager:
     "Represents the DAO Manager, using SQLite"
-    def __init__(self, file_path: str) -> None:
-        self.__file_path = file_path
-        self.__db_configs = self.__open_config_file()
-        self.__db_name: str = self.__db_configs['name']
-        self.__insert_deleting_before = self.__db_configs['delete_before_insert']
-        self.__table: str = self.__db_configs['table_name']
-        self.__db_output_file: str = self.__db_configs['paths']['db_file']
-        self.__ddl_paths: dict = self.__db_configs['paths']['DDL']
-        self.__dml_paths: dict = self.__db_configs['paths']['DML']
-
-
-    def __open_config_file(self) -> dict:
-        """
-        It opens a json file, reads it, and returns a dictionary
-        :return: A dictionary
-        """
-        with open(self.__file_path, 'r') as db_config:
-            return json.load(db_config)["configs"]['database']
     
+    def __init__(self, config_manager: CoMa) -> None:
+        self.__db_configs = config_manager
+        self.__db_name: str = self.__db_configs.db_name
+        self.__insert_deleting_before = self.__db_configs.db_delete_then_insert
+        self.__table: str = self.__db_configs.db_tablename
+        self.__db_output_file: str = self.__db_configs.db_path_db_file
+
+
     def __open_query_file(self, query_path: str) -> str:
         """
         It opens a file, reads it, and returns the contents of the file
@@ -54,7 +44,7 @@ class DAOManager:
         with open(query_path, 'r') as db_config:
             return db_config.read()
 
-    def __execute_queries(self, queries: list[str], error_msg: str, success_msg: str, type: str = 'create') -> None:
+    def __execute_queries(self, queries: list[str], error_msg: str, success_msg: str, type: str = 'create') -> db.Cursor:
         """
         It executes a list of queries and returns the result of the last query executed
         
@@ -108,7 +98,7 @@ class DAOManager:
         It opens a file, reads the contents, replaces a string in the contents, and then executes the
         query creating the table if not exists.
         """
-        query = self.__replace_table_name(self.__open_query_file(self.__ddl_paths['create']))
+        query = self.__replace_table_name(self.__open_query_file(self.__db_configs.db_ddl_create))
         self.__execute_queries([query], 'Table already exists', f'Table {self.__table} created successfully')
     
     def insert_table(self, dataframe: DataFrame) -> None:
@@ -121,7 +111,7 @@ class DAOManager:
         """
         if self.__insert_deleting_before:
             self.__re_do_table()
-        query = self.__replace_table_name(self.__open_query_file(self.__dml_paths['insert']))
+        query = self.__replace_table_name(self.__open_query_file(self.__db_configs.db_dml_insert))
         to_replace = re.findall("1_.", query)
         tuples_list = dataframe.itertuples(index=False, name=None)
         queries = list[str]()
@@ -153,7 +143,7 @@ class DAOManager:
         It opens a file, reads the contents of the file, replaces the table name in the file with the
         table name provided by the user, executes the query and prints a message
         """
-        query = self.__replace_table_name(self.__open_query_file(self.__dml_paths['delete']))
+        query = self.__replace_table_name(self.__open_query_file(self.__db_configs.db_dml_delete))
         self.__execute_queries([query], 'Error deleting the table', f'Table {self.__table} deleted successfully', type='delete')
     
     def drop_table(self) -> None:
@@ -161,6 +151,15 @@ class DAOManager:
         It opens a file, reads the contents of the file, replaces the table name in the file with the
         table name of the class, and then executes the query
         """
-        query = self.__replace_table_name(self.__open_query_file(self.__ddl_paths['drop']))
+        query = self.__replace_table_name(self.__open_query_file(self.__db_configs.db_ddl_drop))
         self.__execute_queries([query], 'Error dropping the table', f'Table {self.__table} dropped successfully', type='drop')
-        
+
+    def read_table(self):
+        """
+        It reads the table and returns the result
+        :return: The result of the query.
+        """
+        query = self.__replace_table_name(self.__open_query_file(self.__db_configs.db_dml_select))
+        result = self.__execute_queries([query], 'Error getting the table info', f'Table {self.__table} read successfully', type='select')
+        # print(result.fetchall())
+        return result.fetchall()

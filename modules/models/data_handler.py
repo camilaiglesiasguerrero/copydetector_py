@@ -23,10 +23,10 @@ from modules.models.group import Group
 class DataHandler:
     """Represents the entity that handle all the data & dataframes."""
     
-    def __init__(self, filename: str, groups: list[Group]) -> None:
+    def __init__(self, columns_name: list[str], filename: str, groups: list[Group]) -> None:
         self.__filename = filename
         self.__groups = groups
-        self.__columns = ["Is Copy?", "Groups", "Files", "Path", "Percentage"]
+        self.__columns = columns_name
         self.__dataframe: pd.DataFrame = pd.DataFrame(columns=self.__columns)
 
     @property

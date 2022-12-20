@@ -16,21 +16,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import json
 
+from modules.models.config_manager import ConfigManager as CoMa
 
 class FileManager:
     """Represents the file manager class that is in charge of handle the config json file."""
 
-    def __init__(self, file_path: str) -> None:
+    def __init__(self, config_manager: CoMa) -> None:
         """
-        This function takes a file path as a string and returns None
+        This function is a constructor for the class. It takes a config_manager object as a parameter
+        and assigns it to the self.__configs variable
         
-        :param file_path: The path to the file you want to open
-        :type file_path: str
+        :param config_manager: CoMa
+        :type config_manager: CoMa
         """
-        self.__path = file_path
-        self.__configs = self.open_file()
+        self.__configs = config_manager
 
     @property
     def percentage(self) -> float:
@@ -38,7 +38,7 @@ class FileManager:
         It returns the percentage of the configs.
         :return: The percentage of the total amount of money that the user wants to invest.
         """
-        return float(self.__configs["percentage"])
+        return float(self.__configs.script_percentage)
 
     @property
     def output_file_path(self) -> str:
@@ -46,7 +46,7 @@ class FileManager:
         It returns the value of the key "filename_output" in the dictionary "__configs"
         :return: The output file path.
         """
-        return self.__configs["filename_output"]
+        return self.__configs.script_file_output
 
     @property
     def sort_by_percentage(self) -> bool:
@@ -55,12 +55,20 @@ class FileManager:
         "__configs"
         :return: The value of the key "sort_by_percent_desc" in the dictionary "__configs"
         """
-        return bool(self.__configs["sort_by_percent_desc"])
+        return self.__configs.script_sort_desc
 
-    def open_file(self) -> dict:
+    @property
+    def files_sufix(self) -> list[str]:
         """
-        It opens a file, reads it, and returns the contents of the file
-        :return: A dictionary of the configs.
+        It returns a list of strings, which are the sufixes of the files that the program will look for
+        :return: A list of strings.
         """
-        with open(self.__path, 'r') as json_file:
-            return json.load(json_file)["configs"]['script']
+        return self.__configs.script_sufixes
+    
+    @property
+    def excluded_files(self) -> list[str]:
+        """
+        This function returns a list of strings that are excluded files
+        :return: A list of strings.
+        """
+        return self.__configs.script_excluded_files

@@ -19,11 +19,12 @@
 import os
 from modules.models.file import File
 from modules.models.group import Group
+from modules.models.file_manager import FileManager
 
 class CopyManager:
     """Represents the class CopyManager that is in charge of handle the creation of groups of files that have possible copies"""
 
-    def __init__(self, analyze_path: str) -> None:
+    def __init__(self, analyze_path: str, files_manager: FileManager) -> None:
         """
         This function takes a path to a directory and creates a list of files to analyze and a list of
         groups analyzed
@@ -34,6 +35,8 @@ class CopyManager:
         self.__analyze_path = analyze_path
         self.__files_to_analyze = list[File]()
         self.__groups_analyzed = list[Group]()
+        self.__files_sufix = files_manager.files_sufix
+        self.__excluded_files = files_manager.excluded_files
     
     @property
     def groups_analyzed(self) -> list[Group]:
@@ -41,8 +44,8 @@ class CopyManager:
         This function takes a list of files and returns a list of groups
         :return: A list of groups
         """
-        self.make_files_to_analyze()
-        self.make_groups()
+        self.__make_files_to_analyze()
+        self.__make_groups()
         return self.__groups_analyzed
 
     def __print_files_path(self) -> None:
@@ -52,22 +55,7 @@ class CopyManager:
         for file in self.__files_to_analyze:
             print(file.path)
 
-    def make_files_to_analyze(self) -> None:
-        """
-        It walks through a directory and returns a list of files that end with .c and are not named specs.c
-        or spec.c
-        :return: A list of File objects.
-        """
-        for root, dirs, files in os.walk(self.__analyze_path, topdown=False):
-            for name in files:
-                if name.endswith(".c") and name != "specs.c" and name != "spec.c":
-                    file_path = os.path.join(root, name)
-                    file_stats = os.stat(file_path).st_size
-                    self.__files_to_analyze.append(File(file_path, file_stats, name))
-        print(f"{len(self.__files_to_analyze)} files detected.")
-        self.__print_files_path()
-
-    def make_groups(self) -> list[Group]:
+    def __make_groups(self) -> None:
         """
         It takes a list of files and returns a list of groups of files
         
@@ -78,17 +66,72 @@ class CopyManager:
         flag_once = True
         for file in self.__files_to_analyze:
             if flag_once:
-                flag_once = False  # solo entro la primera vez
+                flag_once = False  # only enters the first time
                 self.__groups_analyzed.append(Group(file))
 
-            # pregunto si el archivo pertecene a los grupos
+            # check if the file belongs to a group
             flag_belong = False
             for group in self.__groups_analyzed:
                 if group.file_belong(file):
-                    # si pertecene a un grupo existente lo agrego
+                    # if the file belongs to an existent group, add its
                     group.append_file(file)
                     flag_belong = True
 
-            # si no pertenece a ninguno, lo agrego a uno nuevo
+            # if file not belongs to an existent group, create a new one
             if not flag_belong:
                 self.__groups_analyzed.append(Group(file))
+    
+    def __add_files(self, filename: str, index: str) -> None:
+        """
+        It takes a filename and an index, and if the filename is not in the excluded files list, it adds
+        the file to the files to analyze list
+        
+        :param filename: str = The name of the file
+        :type filename: str
+        :param index: tuple
+        :type index: str
+        """
+        if not (filename in self.__excluded_files):
+            file_path = os.path.join(index[0], filename)
+            file_stats = os.stat(file_path).st_size
+            self.__files_to_analyze.append(File(file_path, file_stats, filename))
+    
+    def __check_filenames(self, index: str, files: list[str]) -> None:
+        """
+        It takes a list of filenames and adds them to the files to analyze list
+        
+        :param index: str
+        :type index: str
+        :param files: list[str]
+        :type files: list[str]
+        """
+        if files:
+            for filename in files:
+                self.__add_files(filename, index)
+    
+    def __filter_directories(self, sufix: str, index: str) -> None:
+        """
+        It filters the files in a directory and checks if the file names are valid
+        
+        :param sufix: str = '.c'
+        :type sufix: str
+        :param index: a tuple of 3 elements:
+        :type index: str
+        """
+        if index[2]:
+            files = list[str](filter(lambda file: str(file).endswith(sufix), index[2]))
+            self.__check_filenames(index, files)
+
+    def __make_files_to_analyze(self) -> None:
+        """
+        It walks through a directory and returns a list of files that end with .c and are not named specs.c
+        or spec.c
+        :return: A list of File objects.
+        """
+        directories = list[str](filter(lambda file: 'Repositories' in file[0], os.walk(self.__analyze_path, topdown=False)))
+        for sufix in self.__files_sufix:
+            for index in directories:
+                self.__filter_directories(sufix, index)
+
+        print(f"{len(self.__files_to_analyze)} files detected.")
+        self.__print_files_path()

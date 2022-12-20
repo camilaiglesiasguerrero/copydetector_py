@@ -1,0 +1,37 @@
+{
+    "app_info": {
+        "app_name": "Copy Detector",
+        "version": "[V3.0.0.1]"
+    },
+    "copy_detector": {
+        "configs": {
+            "script": {
+                "percentage": 60,
+                "filename_output": "./possible_copies.csv",
+                "sort_by_percent_desc": false,
+                "path_to_analize": "./Repositories",
+                "files_sufix": [".c", ".h"],
+                "excluded_files": ["spect.c", "spects.c"],
+                "columns_name": ["Is Copy?", "Groups", "Files", "Path", "Percentage"]
+            },
+            "database": {
+                "name": "copies_db",
+                "table_name": "students_copies",
+                "delete_before_insert": true,
+                "paths": {
+                    "db_file": "./modules/database/copies_db.db",
+                    "DDL": {
+                        "create": "./modules/database/queries/DDL/create.sql",
+                        "drop": "./modules/database/queries/DDL/drop.sql"
+                    },
+                    "DML": {
+                        "insert": "./modules/database/queries/DML/insert.sql",
+                        "delete": "./modules/database/queries/DML/delete.sql",
+                        "update": "./modules/database/queries/DML/update.sql",
+                        "select": "./modules/database/queries/DML/select.sql"
+                    }
+                }
+            }
+        }
+    }
+}

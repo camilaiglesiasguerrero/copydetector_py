@@ -23,6 +23,7 @@ from modules.models.file import File
 class Group:
     """Represents a group of files."""
     same_lines_percent_level = 60
+    __to_filter = ["}", "{", "\n", "\r", " ", "\t", "break", ";"]
 
     def __init__(self, file: File) -> None:
         """
@@ -88,8 +89,7 @@ class Group:
         :type line: str
         :return: the line after it has been filtered.
         """
-        to_filter = ["}", "{", "\n", "\r", " ", "\t", "break", ";"]
-        for filter in to_filter:
+        for filter in self.__to_filter:
             line = line.replace(filter, '')
         return line
 
