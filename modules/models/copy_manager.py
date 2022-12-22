@@ -18,8 +18,8 @@
 
 import os
 from modules.models.file import File
-from modules.models.group import Group
 from modules.models.file_manager import FileManager
+from modules.models.group import Group
 
 class CopyManager:
     """Represents the class CopyManager that is in charge of handle the creation of groups of files that have possible copies"""

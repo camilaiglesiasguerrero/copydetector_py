@@ -19,7 +19,6 @@
 from io import TextIOWrapper
 from modules.models.file import File
 
-
 class Group:
     """Represents a group of files."""
     same_lines_percent_level = 60

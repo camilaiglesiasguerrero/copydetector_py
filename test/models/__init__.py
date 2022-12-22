@@ -16,16 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# from modules.models.config_manager import ConfigManager as CoMa
-# from modules.models.copy_detector import CopyDetectorManager
-
-from modules import (
-    CopyDetectorManager, CoMa
+from test.models.test_config_manager import (
+    test_is_bool, test_dml_update, test_config_db, test_config_manager,
+    test_config_percentage, test_ddl_create, test_ddl_drop, test_dml_insert,
+    test_dml_delete, test_dml_select, test_is_df, test_is_list
 )
 
-
-if __name__ == '__main__':
-    FILE_CONFIG_NAME: str = './modules/configs.json'
-    config_manager = CoMa(FILE_CONFIG_NAME)
-    c_manager = CopyDetectorManager(config_manager)
-    c_manager.start_checking_copies()
+from test.models.test_data_handler import (
+    test_is_dataframe
+)

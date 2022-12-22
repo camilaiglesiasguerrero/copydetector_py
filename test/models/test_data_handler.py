@@ -16,16 +16,31 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# from modules.models.config_manager import ConfigManager as CoMa
-# from modules.models.copy_detector import CopyDetectorManager
+import os
+import pandas as pd
 
 from modules import (
-    CopyDetectorManager, CoMa
+    CoMa, DataHandler, File, Group
 )
 
+INIT_TESTS_CMD = 'pytest -v'
+
+con = CoMa('./modules/configs.json')
+g_1 = Group(File('here', 10, 'my_file'))
+g_1.append_file(File('here', 10, 'my_file'))
+dhan = DataHandler(con.script_columns, con.script_file_output, [g_1])
+
+def test_is_dataframe():
+    """Test if the type is dataframe"""
+    assert type(dhan.dataframe) == pd.DataFrame
+
+def test_config_df():
+    """Test if can make the proper dataframe configuration"""
+    assert dhan.config_dataframe()
+
+def test_can_create_csv_file():
+    """Test if the script can create a csv file without errors"""
+    assert dhan.df_to_csv()
 
 if __name__ == '__main__':
-    FILE_CONFIG_NAME: str = './modules/configs.json'
-    config_manager = CoMa(FILE_CONFIG_NAME)
-    c_manager = CopyDetectorManager(config_manager)
-    c_manager.start_checking_copies()
+    os.system(INIT_TESTS_CMD)

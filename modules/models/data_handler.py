@@ -37,7 +37,7 @@ class DataHandler:
         """
         return self.__dataframe
 
-    def config_dataframe(self) -> None:
+    def config_dataframe(self) -> bool:
         """
         It takes a list of groups, each group has a list of files, each file has a name and a similarity
         score. 
@@ -59,18 +59,23 @@ class DataHandler:
         - Path: [file.split(';')[1] for file in self.__groups[i].return_files]
         - Percentage: round(self.__groups[i].same_max, 2)
         """
-        for i in range(len(self.__groups)):
-            data = {
-                self.__columns[0]: f'POSIBLE COPIA {i+1}',
-                self.__columns[1]: f'Group {i+1}',
-                self.__columns[2]: list[str](map(lambda x: x.strip(), [file.split(';')[0] for file in self.__groups[i].return_files])),
-                self.__columns[3]: list[str](map(lambda x: x.strip(), [file.split(';')[1] for file in self.__groups[i].return_files])),
-                self.__columns[4]: round(self.__groups[i].same_max, 2)
-            }
+        try:
+            for i in range(len(self.__groups)):
+                data = {
+                    self.__columns[0]: f'POSIBLE COPIA {i+1}',
+                    self.__columns[1]: f'Group {i+1}',
+                    self.__columns[2]: list[str](map(lambda x: x.strip(), [file.split(';')[0] for file in self.__groups[i].return_files])),
+                    self.__columns[3]: list[str](map(lambda x: x.strip(), [file.split(';')[1] for file in self.__groups[i].return_files])),
+                    self.__columns[4]: round(self.__groups[i].same_max, 2)
+                }
 
-            df = pd.DataFrame(data=data)
-            self.__dataframe = pd.concat(
-                [self.__dataframe, df], ignore_index=True, axis=0)
+                df = pd.DataFrame(data=data)
+                self.__dataframe = pd.concat(
+                    [self.__dataframe, df], ignore_index=True, axis=0)
+            return True
+        except Exception as e:
+            print(f'Exception: {e}')
+            return False
 
     def print_df(self) -> None:
         """
@@ -78,12 +83,17 @@ class DataHandler:
         """
         print(self.__dataframe)
 
-    def df_to_csv(self, sort_by_percentaje_desc: bool = False) -> None:
+    def df_to_csv(self, sort_by_percentaje_desc: bool = False) -> bool:
         """
         It takes a dataframe and saves it as a csv file
         """
-        if sort_by_percentaje_desc:
-            self.__dataframe =\
-                self.__dataframe.sort_values(
-                    self.__columns[4], ascending=False)
-        self.__dataframe.to_csv(self.__filename, sep=',', index=False)
+        try:
+            if sort_by_percentaje_desc:
+                self.__dataframe =\
+                    self.__dataframe.sort_values(
+                        self.__columns[4], ascending=False)
+            self.__dataframe.to_csv(self.__filename, sep=',', index=False)
+            return True
+        except Exception as e:
+            print(f'Exception: {e}')
+            return False
